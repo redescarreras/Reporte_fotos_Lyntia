@@ -3,14 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0056b3">
+    <meta name="description" content="Generador de Reportes Fotográficos para Elecnor | Lyntia | Redes Carreras">
     <title>Generador de Reportes Fotográficos - Elecnor | Lyntia | Redes Carreras</title>
     <link rel="stylesheet" href="css/style.css">
+    <link rel="manifest" href="manifest.json">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <!-- Header -->
+    <!-- Install Prompt Banner -->
+    <div id="install-banner" class="install-banner hidden">
+        <span>¿Deseas instalar esta aplicación?</span>
+        <div class="install-actions">
+            <button onclick="installApp()" class="btn-install">Instalar</button>
+            <button onclick="dismissInstall()" class="btn-dismiss">Ahora no</button>
+        </div>
+    </div>
     <header class="main-header">
         <div class="header-content">
             <div class="logo-section">
@@ -185,5 +195,42 @@
     <script src="libs/jspdf.umd.min.js"></script>
     <script src="libs/compressor.min.js"></script>
     <script src="js/app.js"></script>
+    
+    <!-- PWA Install & Service Worker -->
+    <script>
+        // Register Service Worker
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js')
+                .then(reg => console.log('Service Worker registrado'))
+                .catch(err => console.log('Service Worker error:', err));
+        }
+
+        // PWA Install Prompt
+        let deferredPrompt;
+        const installBanner = document.getElementById('install-banner');
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            installBanner.classList.remove('hidden');
+        });
+
+        function installApp() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then(choiceResult => {
+                    if (choiceResult.outcome === 'accepted') {
+                        console.log('App instalada');
+                    }
+                    deferredPrompt = null;
+                    installBanner.classList.add('hidden');
+                });
+            }
+        }
+
+        function dismissInstall() {
+            installBanner.classList.add('hidden');
+        }
+    </script>
 </body>
 </html>

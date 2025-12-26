@@ -1,0 +1,21 @@
+{
+    "name": "Generador de Reportes Fotográficos",
+    "short_name": "Reportes Fotos",
+    "description": "Aplicación para generar reportes fotográficos para Elecnor | Lyntia | Redes Carreras",
+    "start_url": "./index.html",
+    "display": "standalone",
+    "background_color": "#1e293b",
+    "theme_color": "#0056b3",
+    "icons": [
+        {
+            "src": "assets/logo-lyntia.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "assets/logo-lyntia.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ]
+}
