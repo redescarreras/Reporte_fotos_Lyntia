@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generador de Reportes Fotográficos - Elecnor | Lyntia | Redes Carreras</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Header -->
+    <header class="main-header">
+        <div class="header-content">
+            <div class="logo-section">
+                <img src="assets/logo-elecnor.png" alt="Elecnor" class="header-logo">
+                <img src="assets/logo-lyntia.png" alt="Lyntia" class="header-logo">
+                <img src="assets/logo-redes.png" alt="Redes Carreras S.L" class="header-logo-small">
+            </div>
+            <h1>Generador de Reportes Fotográficos</h1>
+            <button class="btn-reset" onclick="resetApp()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+                    <path d="M3 3v5h5"/>
+                </svg>
+                Nuevo Reporte
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Upload Section -->
+        <section id="upload-section" class="upload-section">
+            <div class="upload-container">
+                <div class="upload-header">
+                    <h2>Cargar Fotografías</h2>
+                    <p class="upload-subtitle">Sube todas las fotografías de tu reporte. El sistema las agrupará automáticamente según su nombre.</p>
+                </div>
+                
+                <div id="drop-zone" class="drop-zone">
+                    <div class="drop-zone-content">
+                        <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                        </svg>
+                        <h3>Arrastra y suelta tus fotografías aquí</h3>
+                        <p>o</p>
+                        <label class="btn-upload">
+                            <input type="file" id="file-input" multiple accept="image/jpeg,image/jpg,image/png" hidden>
+                            Seleccionar Archivos
+                        </label>
+                        <p class="file-types">Formatos permitidos: JPG, JPEG, PNG</p>
+                        <p class="file-limit">Sin límite de cantidad - Procesamiento local</p>
+                    </div>
+                </div>
+
+                <div id="upload-progress" class="upload-progress hidden">
+                    <div class="progress-info">
+                        <span>Procesando fotografías...</span>
+                        <span id="progress-count">0/0</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div id="progress-fill" class="progress-fill"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Dashboard Section -->
+        <section id="dashboard-section" class="dashboard-section hidden">
+            <!-- Report Info Form -->
+            <div class="report-info-card">
+                <h3>Información del Reporte</h3>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="report-title">Título del Reporte</label>
+                        <input type="text" id="report-title" placeholder="REPORTE DE FOTOS" value="REPORTE DE FOTOS">
+                    </div>
+                    <div class="form-group">
+                        <label for="report-code">Código / Referencia</label>
+                        <input type="text" id="report-code" placeholder="3033" value="3033">
+                    </div>
+                    <div class="form-group">
+                        <label for="report-author">Autor</label>
+                        <input type="text" id="report-author" placeholder="Nombre del técnico" value="">
+                    </div>
+                    <div class="form-group">
+                        <label for="report-date">Fecha</label>
+                        <input type="date" id="report-date">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Photo Groups -->
+            <div class="groups-container">
+                <div class="groups-header">
+                    <h3>Grupos de Fotografías (<span id="group-count">0</span>)</h3>
+                    <p class="groups-info">Las fotografías se han agrupado automáticamente según su nombre. Cada grupo corresponde a un código único (ej: CR129, CR130).</p>
+                </div>
+                
+                <div id="groups-list" class="groups-list">
+                    <!-- Groups will be inserted here dynamically -->
+                </div>
+            </div>
+
+            <!-- Floating Action Bar -->
+            <div class="action-bar">
+                <div class="action-info">
+                    <span id="total-photos">0 fotografías en total</span>
+                </div>
+                <div class="action-buttons">
+                    <button class="btn-save" onclick="saveReport()">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/>
+                            <polyline points="17,21 17,13 7,13 7,21"/>
+                            <polyline points="7,3 7,8 15,8"/>
+                        </svg>
+                        Guardar Reporte
+                    </button>
+                    <button class="btn-load" onclick="showSavedReports()">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/>
+                        </svg>
+                        Mis Reportes
+                    </button>
+                    <button class="btn-add-more" onclick="addMorePhotos()">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 4v16m8-8H4"/>
+                        </svg>
+                        Añadir fotos
+                    </button>
+                    <button class="btn-generate" onclick="generatePDF()">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                            <path d="M14 2v6h6M12 18v-6M9 15l3-3 3 3"/>
+                        </svg>
+                        Generar PDF
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Generating Modal -->
+        <div id="generating-modal" class="modal hidden">
+            <div class="modal-content">
+                <div class="spinner"></div>
+                <h3>Generando Reporte PDF</h3>
+                <p>Por favor espera mientras se crea tu reporte fotográfico...</p>
+                <div class="progress-bar">
+                    <div id="pdf-progress" class="progress-fill"></div>
+                </div>
+                <span id="pdf-status">Inicializando...</span>
+            </div>
+        </div>
+
+        <!-- Saved Reports Modal -->
+        <div id="saved-reports-modal" class="modal hidden">
+            <div class="modal-content modal-large">
+                <div class="modal-header">
+                    <h3>Reportes Guardados</h3>
+                    <button class="btn-close" onclick="closeSavedReportsModal()">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M18 6L6 18M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div id="saved-reports-list" class="saved-reports-list">
+                        <!-- Reports will be listed here -->
+                    </div>
+                    <div id="no-reports-message" class="no-reports-message" style="display: none;">
+                        <p>No tienes reportes guardados.</p>
+                        <p>Sube fotos y guarda tu primer reporte.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Hidden file input for adding more photos -->
+    <input type="file" id="additional-files" multiple accept="image/jpeg,image/jpg,image/png" hidden>
+
+    <!-- Libraries -->
+    <script src="libs/jspdf.umd.min.js"></script>
+    <script src="libs/compressor.min.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
